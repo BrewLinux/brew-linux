@@ -1,0 +1,10 @@
+Usage:
+./build.sh <options>
+
+options:
+-h|--help		just some help
+-t|--target <tname>	the suffix for the target name -t "testmich" expands to testmich-i386.iso when i386 is the target platform. With multible platforms the name expands to each platform...
+-a|--arch [amd64|i386]	target architecture, you can build more than one with sth. like --arch "amd64 i386"
+-s|--scp  		uploads the iso to target needs scpcommand.sh
+-d|--deploy		uploads the iso to deployserver, needs deploycommand.sh
+-n|--nocache		do not use the cache, be careful it just calls build with lb config

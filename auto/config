@@ -1,10 +1,41 @@
 #!/bin/sh
 
 set -e
+while [ $# -gt 0 ]; do
+    arg="$1"
+    case "$arg" in
+	-a)
+	    arch="$2"
+	    shift
+	    ;;
+	--)
+	    ;;
+	*)
+	    temp="$temp "'"'"$arg"'"'
+	    ;;
+    esac
+    shift
+done
+
+lb_opts=""
+
+case "$arch" in
+    amd64)
+	lb_opts="$lb_opts --debian-installer live --architectures amd64"
+	;;
+    i386)
+	lb_opts="$lb_opts --debian-installer live --architectures i386 --linux-flavours 686-pae"
+	;;
+esac
+
 
 
 lb config noauto \
-     --architectures i386 \
-     --linux-flavours 686-pae \
+   --bootappend-live "boot=live components locales=de_DE.UTF-8 keyboard-layouts=de username=brew" \
+   --memtest memtest86 \
+   --iso-application "BREWLinux" \
+   --iso-publisher "BREW c00clupea" \
+   --iso-volume "brew live" \
+     $lb_opts \
      "${@}"
 

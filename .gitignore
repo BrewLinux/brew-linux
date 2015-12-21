@@ -1,4 +1,5 @@
 binary/
+brew_result/
 binary*.iso
 binary*.img
 binary*.tar*
@@ -9,6 +10,8 @@ live-image-*
 
 .build/
 build.log
+
+scpcommand.sh
 
 cache/
 

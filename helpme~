@@ -1,0 +1,8 @@
+Usage:
+./build.sh <options>
+
+options:
+-h|--help		just some help
+-a|--arch [amd64|i386]	target architecture, you can build more than one with sth. like --arch "amd64 i386"
+-s|--scp  		uploads the iso to target needs scpcommand.sh
+-d|--deploy		uploads the iso to deployserver, needs deploycommand.sh
