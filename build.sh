@@ -12,6 +12,7 @@ TARGET_NAME="brew"
 TARGET_DIR="brew_result"
 SCP_DO=''
 NO_CACHE=''
+PRESEEDFILE=''
 
 failure() {
     echo "Something went wrong" >&2
@@ -46,7 +47,7 @@ target_name() {
 }
 
 
-options=$(getopt -o "a:t:sdhn" --long "arch:,target:,scp,deploy,help,nocache" -- "$@")
+options=$(getopt -o "a:t:sdhnp:" --long "arch:,target:,scp,deploy,help,nocache,preseed" -- "$@")
 eval set -- "$options"
 
 while true; do
@@ -57,6 +58,7 @@ while true; do
 	-d|--deploy) DEPLOY_DO="1";shift; ;;
 	-n|--nocache) NO_CACHE="1";shift ;;
 	-h|--help) cat helpme;exit 1; ;;
+	-p|--preseed) PRESEEDFILE="$2";shift 2; ;;
 	--)shift; break; ;;
 	*) echo "Invalid command: $1" >&2; exit 1; ;;
     esac
@@ -79,6 +81,19 @@ for BREW_ARCH in $ARCHES; do
     esac
     
 done
+
+if [ -n "$PRESEEDFILE" ]; then
+    if [ ! -e $PRESEEDFILE ]; then
+	echo "You wanted to preseed...but file does not exist..."
+	failure
+    fi
+    if [ -e "config/includes.installer/preseed.cfg" ]; then
+	echo "You wanted to preseed..but there is already a preseed file..."
+	failure
+    fi
+    cat $PRESEEDFILE > config/includes.installer/preseed.cfg
+fi
+
 
 mkdir -p $TARGET_DIR
 
@@ -119,6 +134,13 @@ for BREW_ARCH in $ARCHES; do
 #    echo $GEN_ISO
  #   echo $TARGET_ISO
 done
+
+
+if [ -n "$PRESEEDFILE" ]; then
+    #delete the preseed but only when we wrote it
+    rm config/includes.installer/preseed.cfg
+fi
+
 echo "I am done"
 
     
