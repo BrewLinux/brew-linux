@@ -4,8 +4,20 @@ set -e
 while [ $# -gt 0 ]; do
     arg="$1"
     case "$arg" in
-	-a)
+	-t)
 	    arch="$2"
+	    shift
+	    ;;
+	-u)
+	    mirror="$2"
+	    shift
+	    ;;
+	-v)
+	    livemirror="$2"
+	    shift
+	    ;;
+	-w)
+	    cache="$2"
 	    shift
 	    ;;
 	--)
@@ -28,6 +40,14 @@ case "$arch" in
 	;;
 esac
 
+#echo "using $cache" >&2
+#cache="http://192.168.10.43:3142"
+FTP_PROX="\"$cache/\""
+HTTP_PROX="\"$cache/\""
+MI_CHROOT="\"$cache/$livemirror\""
+MI_CHROOTS="\"$cache/securitydebian.org/debian\""
+MI_PAR="\"$cache/$livemirror\""
+MI_BI="\"http://$mirror\""
 
 
 lb config noauto \
@@ -36,6 +56,14 @@ lb config noauto \
    --iso-application "BREWLinux" \
    --iso-publisher "BREW c00clupea" \
    --iso-volume "brew live" \
-     $lb_opts \
+   --apt-ftp-proxy  $FTP_PROX \
+   --apt-http-proxy $HTTP_PROX \
+    --mirror-binary $MI_BI \
+    --mirror-binary-security "http://security.debian.org/" \
+    --mirror-bootstrap $MI_BI \
+    --mirror-chroot  $MI_CHROOT \
+    --mirror-chroot-security $MI_CHROOT \
+    --parent-mirror-bootstrap $MI_PAR \
+     $lb_opts 
      "${@}"
 

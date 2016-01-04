@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=BGSET
+Exec=sh -c 'gsettings set org.mate.background picture-filename /etc/bg/brew.png'

@@ -1,7 +1,3 @@
 xorg
 slim
-openbox
-obconf
-obmenu
-tint2
-feh
+mate-desktop-environment-core

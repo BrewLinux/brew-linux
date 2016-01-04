@@ -13,6 +13,9 @@ TARGET_DIR="brew_result"
 SCP_DO=''
 NO_CACHE=''
 PRESEEDFILE=''
+MIRROR=''
+CACHE=''
+LIVEMIRROR=''
 
 failure() {
     echo "Something went wrong" >&2
@@ -47,7 +50,7 @@ target_name() {
 }
 
 
-options=$(getopt -o "a:t:sdhnp:" --long "arch:,target:,scp,deploy,help,nocache,preseed" -- "$@")
+options=$(getopt -o "a:t:sdhnp:m:c:l:" --long "arch:,target:,scp,deploy,help,nocache,preseed,mirror,cache,livemirror" -- "$@")
 eval set -- "$options"
 
 while true; do
@@ -59,6 +62,9 @@ while true; do
 	-n|--nocache) NO_CACHE="1";shift ;;
 	-h|--help) cat helpme;exit 1; ;;
 	-p|--preseed) PRESEEDFILE="$2";shift 2; ;;
+	-m|--mirror) MIRROR="$2";shift 2; ;;
+	-c|--cache) CACHE="$2";shift 2; ;;
+	-l|--livemirror) LIVEMIRROR="$2";shift 2; ;;
 	--)shift; break; ;;
 	*) echo "Invalid command: $1" >&2; exit 1; ;;
     esac
@@ -94,6 +100,30 @@ if [ -n "$PRESEEDFILE" ]; then
     cat $PRESEEDFILE > config/includes.installer/preseed.cfg
 fi
 
+CACHE_OPT=''
+if [ -n "$CACHE" ];then
+    CACHE_OPT="-w $CACHE"
+else
+    echo "You have no cache...." >&2
+    failure
+fi
+
+
+MIRROR_OPT=''
+if [ -n "$MIRROR" ];then
+    MIRROR_OPT="-u $MIRROR"
+else
+    echo "You have no mirror...." >&2
+    failure
+fi
+
+LMIRROR_OPT=''
+if [ -n "$LIVEMIRROR" ];then
+    LMIRROR_OPT="-v $LIVEMIRROR"
+else
+    echo "You have no live mirror...." >&2
+    failure
+fi
 
 mkdir -p $TARGET_DIR
 
@@ -104,13 +134,13 @@ for BREW_ARCH in $ARCHES; do
     set +e
     : >> build.log
     if [ -n "$NO_CACHE" ];then
-	echo "Be careful you do not use a cache..."
+	echo "Be careful you do not use clean --purge..."
     else
 	
 	runcommand lb clean --purge
 	[ $? -eq 0 ] || failure
     fi
-    runcommand lb config -a $BREW_ARCH "$@"
+    runcommand lb config -t $BREW_ARCH $CACHE_OPT $MIRROR_OPT $LMIRROR_OPT"$@"
     [ $? -eq 0 ] || failure
 
     runcommand lb build

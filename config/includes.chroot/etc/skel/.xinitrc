@@ -1,1 +1,1 @@
-exec openbox-session
+#exec openbox-session
