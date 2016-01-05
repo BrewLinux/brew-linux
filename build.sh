@@ -100,32 +100,43 @@ if [ -n "$PRESEEDFILE" ]; then
     cat $PRESEEDFILE > config/includes.installer/preseed.cfg
 fi
 
-CACHE_OPT=''
-if [ -n "$CACHE" ];then
-    CACHE_OPT="-w $CACHE"
-else
+
+if [ ! -n "$CACHE" ];then
     echo "You have no cache...." >&2
     failure
 fi
 
 
-MIRROR_OPT=''
-if [ -n "$MIRROR" ];then
-    MIRROR_OPT="-u $MIRROR"
-else
+
+if [ ! -n "$MIRROR" ];then
     echo "You have no mirror...." >&2
     failure
 fi
 
-LMIRROR_OPT=''
-if [ -n "$LIVEMIRROR" ];then
-    LMIRROR_OPT="-v $LIVEMIRROR"
-else
+
+if [ ! -n "$LIVEMIRROR" ];then
     echo "You have no live mirror...." >&2
     failure
 fi
 
 mkdir -p $TARGET_DIR
+
+FTP_PROX="\"$CACHE/\""
+HTTP_PROX="\"$CACHE/\""
+MI_CHROOT="\"$CACHE/$LIVEMIRROR\""
+MI_CHROOTS="\"$CACHE/securitydebian.org/debian\""
+MI_PAR="\"$CACHE/$LIVEMIRROR\""
+MI_BI="\"http://$MIRROR\""
+
+
+CONF_OPTS=" --apt-ftp-proxy  $FTP_PROX \
+   --apt-http-proxy $HTTP_PROX \
+    --mirror-binary $MI_BI \
+    --mirror-binary-security "http://security.debian.org/" \
+    --mirror-bootstrap $MI_BI \
+    --mirror-chroot  $MI_CHROOT \
+    --mirror-chroot-security $MI_CHROOT \
+    --parent-mirror-bootstrap $MI_PAR"
 
 #iterate archs
 for BREW_ARCH in $ARCHES; do
@@ -140,7 +151,7 @@ for BREW_ARCH in $ARCHES; do
 	runcommand lb clean --purge
 	[ $? -eq 0 ] || failure
     fi
-    runcommand lb config -t $BREW_ARCH $CACHE_OPT $MIRROR_OPT $LMIRROR_OPT"$@"
+    runcommand lb config -a $BREW_ARCH $CONF_OPTS"$@"
     [ $? -eq 0 ] || failure
 
     runcommand lb build
