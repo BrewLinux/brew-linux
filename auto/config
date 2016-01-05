@@ -29,7 +29,6 @@ case "$arch" in
 esac
 
 lb config noauto \
-   --bootappend-live "boot=live components locales=de_DE.UTF-8 keyboard-layouts=de username=brew" \
    --memtest memtest86 \
    --iso-application "BREWLinux" \
    --iso-publisher "BREW c00clupea" \

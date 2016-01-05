@@ -16,6 +16,7 @@ PRESEEDFILE=''
 MIRROR=''
 CACHE=''
 LIVEMIRROR=''
+KEYBOARD=''
 
 failure() {
     echo "Something went wrong" >&2
@@ -50,7 +51,7 @@ target_name() {
 }
 
 
-options=$(getopt -o "a:t:sdhnp:m:c:l:" --long "arch:,target:,scp,deploy,help,nocache,preseed,mirror,cache,livemirror" -- "$@")
+options=$(getopt -o "a:t:sdhnp:m:c:l:k:u:" --long "arch:,target:,scp,deploy,help,nocache,preseed,mirror,cache,livemirror,keyboard,language" -- "$@")
 eval set -- "$options"
 
 while true; do
@@ -65,6 +66,8 @@ while true; do
 	-m|--mirror) MIRROR="$2";shift 2; ;;
 	-c|--cache) CACHE="$2";shift 2; ;;
 	-l|--livemirror) LIVEMIRROR="$2";shift 2; ;;
+	-k|--keyboard) KEYBOARD="$2";shift 2; ;;
+	-u|--language) LANGUAGE="$2";shift 2; ;;
 	--)shift; break; ;;
 	*) echo "Invalid command: $1" >&2; exit 1; ;;
     esac
@@ -84,8 +87,7 @@ for BREW_ARCH in $ARCHES; do
 	    echo "unsupported architecture $BREW_ARCH"
 	    exit 1
 	    ;;
-    esac
-    
+    esac    
 done
 
 if [ -n "$PRESEEDFILE" ]; then
@@ -119,6 +121,16 @@ if [ ! -n "$LIVEMIRROR" ];then
     failure
 fi
 
+if [ ! -n "$KEYBOARD" ];then
+    echo "No KEyboard setting found" >&2
+    failure
+fi
+
+if [ ! -n "$LANGUAGE" ];then
+    echo "No locale setting found" >&2
+    failure
+fi
+
 mkdir -p $TARGET_DIR
 
 FTP_PROX="\"$CACHE/\""
@@ -127,7 +139,7 @@ MI_CHROOT="\"$CACHE/$LIVEMIRROR\""
 MI_CHROOTS="\"$CACHE/securitydebian.org/debian\""
 MI_PAR="\"$CACHE/$LIVEMIRROR\""
 MI_BI="\"http://$MIRROR\""
-
+BOOT_APPEND="--bootappend-live \"boot=live components locales=$LANGUAGE keyboard-layouts=$KEYBOARD username=brew\""
 
 CONF_OPTS=" --apt-ftp-proxy  $FTP_PROX \
    --apt-http-proxy $HTTP_PROX \
@@ -136,7 +148,10 @@ CONF_OPTS=" --apt-ftp-proxy  $FTP_PROX \
     --mirror-bootstrap $MI_BI \
     --mirror-chroot  $MI_CHROOT \
     --mirror-chroot-security $MI_CHROOT \
-    --parent-mirror-bootstrap $MI_PAR"
+    --parent-mirror-bootstrap $MI_PAR" \
+    $BOOT_APPEND
+
+
 
 #iterate archs
 for BREW_ARCH in $ARCHES; do
