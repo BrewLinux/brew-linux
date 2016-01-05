@@ -1,7 +1,7 @@
-# BREW-Linux
+# BREWLinux
 
-This is just a repo for BREW-Linux
+This is just a repo for BREWLinux
 
-BREW-Linux is a debian based hybrid-live CD
+BREWLinux is a debian based hybrid-live CD
 
 We use it in lectures for computer sciences and other stuff
