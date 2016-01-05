@@ -17,6 +17,8 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+eval set -- "$temp"
+
 lb_opts=""
 
 case "$arch" in
@@ -33,6 +35,6 @@ lb config noauto \
    --iso-application "BREWLinux" \
    --iso-publisher "BREW c00clupea" \
    --iso-volume "brew live" \
-     $lb_opts 
+    "$lb_opts" \
      "${@}"
 
