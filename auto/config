@@ -34,6 +34,8 @@ lb config noauto \
    --memtest memtest86 \
    --iso-application "BREWLinux" \
    --iso-publisher "BREW c00clupea" \
+   --keyring-packages brew-keyring \
+   --apt-secure false \
    --iso-volume "brew live" \
     "$lb_opts" \
      "${@}"

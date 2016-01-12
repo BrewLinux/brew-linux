@@ -1,8 +1,0 @@
-openjdk-7-jdk
-openjdk-7-jre
-build-essential
-automake
-gdb
-python3.4
-ruby2.1
-nasm

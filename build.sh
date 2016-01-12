@@ -151,6 +151,10 @@ CONF_OPTS=" --apt-ftp-proxy $FTP_PROX \
     --mirror-chroot-security $MI_CHROOT \
     --parent-mirror-bootstrap $MI_PAR \
     --bootappend-live $BOOT_APPEND \
+    --clean \
+    --ignore-system-defaults \
+    -b iso-hybrid \
+    --debian-installer live \
     --verbose"
 
 #iterate archs
