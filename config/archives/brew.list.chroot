@@ -1,1 +1,4 @@
 deb http://141.39.242.13/apt/debian external-prod main
+deb http://http.debian.net/debian jessie-backports main
+deb http://http.kali.org/kali sana main non-free contrib
+deb http://security.kali.org/kali-security sana/updates main contrib non-free
